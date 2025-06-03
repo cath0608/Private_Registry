@@ -1,0 +1,28 @@
+name: CI Pipeline for Local Registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to local registry (no login required by default)
+        run: echo "No login required for local registry"
+
+      - name: Build Docker image
+        run: |
+          docker build -t localhost:5000/my-flask-app:latest .
+
+      - name: Push to local registry
+        run: |
+          docker push localhost:5000/my-flask-app:latest
