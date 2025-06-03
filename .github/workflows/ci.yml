@@ -26,3 +26,9 @@ jobs:
       - name: Push to local registry
         run: |
           docker push localhost:5000/my-flask-app:latest
+            - name: Wait for registry
+        run: |
+          for i in {1..10}; do
+            curl -fs http://localhost:5000/v2/_catalog && break || sleep 3
+          done
+
