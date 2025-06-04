@@ -25,9 +25,19 @@ jobs:
         run: |
           gcloud auth configure-docker asia-south1-docker.pkg.dev
 
-      - name: Build and Push Docker image
+      - name: Build Docker image
         run: |
-          docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/my-app:latest .
-          docker push asia-south1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/my-app:latest
-        env:
-          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-docker-repo/my-app:latest .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-docker-repo/my-app:latest
+          format: table
+          exit-code: 1
+          severity: CRITICAL,HIGH
+
+      - name: Push Docker image (only if scan passed)
+        if: success()
+        run: |
+          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-docker-repo/my-app:latest
