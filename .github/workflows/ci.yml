@@ -38,6 +38,6 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Push Docker image (only if scan passed)
-        if: success()
+        if: ${{ success() }}
         run: |
           docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-docker-repo/my-app:latest

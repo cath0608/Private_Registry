@@ -1,14 +1,14 @@
-FROM python:3.9-slim
+FROM python:3.9-alpine
 
-# Update system packages
-RUN apt-get update && apt-get upgrade -y && apt-get clean
+# Install dependencies
+RUN apk update && apk add --no-cache gcc musl-dev libffi-dev
 
 WORKDIR /app
 
 COPY app.py .
 
-# Upgrade setuptools to fix known vulnerabilities
-RUN pip install --upgrade setuptools>=78.1.1
+# Upgrade pip and setuptools to fix known vulnerabilities
+RUN pip install --upgrade pip setuptools
 
 # Install Flask
 RUN pip install flask
